@@ -13,11 +13,12 @@ def import_csv_layout(path): #path will pass the csv file
 		return terrain_map 	
 
 def import_sliced_img(path): #path will load the img file
-	surface = pygame.image.load(path).convert_alpha()
+	surface = pygame.image.load(path).convert_alpha() #image containing transparency
 	slice_x = int(surface.get_size()[0] / tile_size) #get size will return a tuple, 0 index being width
 	slice_y = int(surface.get_size()[1] / tile_size) # 1 index being height 
 
 	sliced_tiles = []
+	#Slicing the tile surface
 	for row in range(slice_y):	
 		for column in range(slice_x):
 			x = column * tile_size

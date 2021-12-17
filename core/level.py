@@ -1,13 +1,13 @@
 import pygame 
 from support import import_csv_layout, import_sliced_img
 from settings import tile_size
-from tile_specs import TileSpecs
+from tile_specs import TileSpecs, StaticTile
 
 
 class Level: # main class
 	def __init__(self, level_data, surface): #level_data will be a dictionary with all csv files from Tileset
 		self.display_surface = surface 
-		self.level_shift = 0 
+		self.level_shift = -4 
 
 		#import csv data and grab the data from terrain key
 		terrain_layout = import_csv_layout(level_data['terrain'])
@@ -24,9 +24,13 @@ class Level: # main class
 					x_position = column_index * tile_size
 					y_position = row_index * tile_size
 
+					#importing the sliced tile set that will populate the layout
 					if layout_type == "terrain":
 						terrain_tile_list = import_sliced_img('../graphics/terrain/Terrain_V2.png') #sliced images
-						sprite = TileSpecs(tile_size, x_position, y_position)
+						
+						#getting the value of every tile imported in terrain_tile_list
+						tile_surface = terrain_tile_list[int(tile_value)]
+						sprite = StaticTile(tile_size, x_position, y_position, tile_surface)
 						sprite_group.add(sprite) # Adding individual sprites to group of sprites
 			
 
