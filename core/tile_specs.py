@@ -15,4 +15,9 @@ class StaticTile(TileSpecs):
 	
 	def __init__(self, size, x, y, surface):
 		super().__init__(size,x,y)
-		self.image = surface		
+		self.image = surface	
+
+class trees(StaticTile):
+
+	def __init__(self, size, x, y):
+		super().__init__(size, x, y, pygame.image.load('../graphics/trees/Tree_left.png'))			
