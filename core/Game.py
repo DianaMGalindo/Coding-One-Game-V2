@@ -28,7 +28,7 @@ while run:
 			run = False
 	#adding images within the game loop 
 	#screen.blit(background, (0,0))		
-	screen.fill('black')		
+	screen.fill('grey')		
 
 	level.run()		
 	pygame.display.update()

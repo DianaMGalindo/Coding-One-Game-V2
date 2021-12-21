@@ -23,7 +23,7 @@ def import_sliced_img(path): #path will load the img file
 		for column in range(slice_x):
 			x = column * tile_size
 			y = row * tile_size
-			new_surface = pygame.Surface((tile_size,tile_size)) 
+			new_surface = pygame.Surface((tile_size,tile_size), flags = pygame.SRCALPHA)# SRCALPHA will convert all unused pixels to transparent 
 			new_surface.blit(surface,(0,0), pygame.Rect(x,y,tile_size, tile_size))
 
 			sliced_tiles.append(new_surface)	

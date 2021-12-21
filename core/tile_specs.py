@@ -7,17 +7,32 @@ class TileSpecs(pygame.sprite.Sprite): # sub class of Sprite pygame, so that the
 		self.image = pygame.Surface((size, size)) #size of the tile = 64
 		self.rect = self.image.get_rect(topleft= (x,y))
 
+
 	def update(self, screen_shift):
 		self.rect.x += screen_shift
 
 
 class StaticTile(TileSpecs):
 	
-	def __init__(self, size, x, y, surface):
+	def __init__(self, size, x, y, surface, offset_y = False):
 		super().__init__(size,x,y)
-		self.image = surface	
+		self.image = surface
 
-class trees(StaticTile):
+		if offset_y	== True:
+			offset_y = size + y 
+			self.rect = self.image.get_rect(bottomleft=(x, offset_y))
 
-	def __init__(self, size, x, y):
-		super().__init__(size, x, y, pygame.image.load('../graphics/trees/Tree_left.png'))			
+class Trees(StaticTile):
+
+	def __init__(self, size, x, y, path, offset_y):
+		super().__init__(size, x, y, pygame.image.load(path).convert_alpha(), offset_y)
+		
+class House(StaticTile):
+
+	def __init__(self, size, x, y, path, offset_y):
+		super().__init__(size, x, y, pygame.image.load(path).convert_alpha(), offset_y)		
+
+class Door(StaticTile):
+	def __init__(self, size, x, y, path, offset_y):	
+		super().__init__(size, x, y, pygame.image.load(path).convert_alpha(), offset_y)
+		
