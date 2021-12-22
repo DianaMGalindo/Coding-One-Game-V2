@@ -1,8 +1,9 @@
 import pygame 
 from support import import_csv_layout, import_sliced_img
-from settings import tile_size
+from settings import tile_size, screen_range_upper, screen_range_lower
 from tile_specs import TileSpecs, StaticTile, Trees, House, Door
-from player import Player
+from player import PlayerOne, PlayerTwo
+
 
 
 class Level: # main class
@@ -14,8 +15,16 @@ class Level: # main class
 
 		player_one_layout = import_csv_layout(level_data['player-one'])
 		self.player_one = pygame.sprite.GroupSingle()
-		self.goal  = pygame.sprite.GroupSingle() #should be door
-		self.player_setup(player_one_layout	)
+		#self.goal  = pygame.sprite.GroupSingle() #should be door
+		self.player_one_setup(player_one_layout	)
+
+		#PLayer Two
+
+		player_two_layout = import_csv_layout(level_data['player-two'])
+		self.player_two = pygame.sprite.GroupSingle()
+		#self.goal  = pygame.sprite.GroupSingle() #should be door
+		self.player_two_setup(player_two_layout	)
+
 
 		#Terrain setup
 		#import csv data and grab the data from terrain key
@@ -41,6 +50,37 @@ class Level: # main class
 		self.door_sprites = self.create_tile_group(door_layout, 'door')
 
 	
+	#creating the 'camera' effect to be able to navigate the level
+	def window_scroll(self):
+		player_one_scroll = self.player_one.sprite
+		player_two_scroll = self.player_two.sprite
+
+		player_one_x = player_one_scroll.rect.centerx
+		player_two_x = player_two_scroll.rect.centerx
+
+		direction_x = player_one_scroll.direction.x	
+		direction_x_two = player_two_scroll.direction.x	
+
+		if player_one_x < screen_range_lower and direction_x  < 0:
+			self.level_shift = 4
+			player_one_scroll.speed = 0
+			
+		elif player_one_x  > screen_range_upper and direction_x  > 0:
+			self.level_shift = -4
+			player_one_scroll.speed = 0
+			
+		else: 
+			if player_two_x < screen_range_lower and direction_x_two <0:
+				self.level_shift = 4
+				player_two_scroll.speed = 0
+			elif player_two_x > screen_range_upper and direction_x_two > 0:
+				self.level_shift = -4
+				player_two_scroll.speed = 0	
+			else:	
+				self.level_shift = 0
+				player_one_scroll.speed = 4
+				player_two_scroll.speed = 4
+
 
 	#creating function that will find 'x' and 'y' position of each tile.	
 	def create_tile_group(self, level_layout, layout_type):
@@ -80,19 +120,43 @@ class Level: # main class
 
 					sprite_group.add(sprite) 
 
-		return sprite_group	
+		return sprite_group
 
-	def player_setup(self, layout):
+
+	def horizontal_collision(self):
+		players = self.player_one.sprite and self.player_two.sprite
+		players.rect.x += players.direction.x * players.speed
+
+		for sprite in self.terrain_sprites.sprites():
+			if sprite.rect.colliderect(players.rect):
+				if players.direction.x <0:
+					players.rect.left = sprite.rect.right
+				elif players.direction.x > 0:
+					players.rect.right = sprite.rect.left			
+
+	def player_one_setup(self, layout):
 		for row_index, row in enumerate(layout):
 			for column_index, tile_value in enumerate(row):
 				x_position = column_index * tile_size
 				y_position = row_index * tile_size
 
 				if tile_value == '0':
-					sprite = Player(x_position, y_position)
+					sprite = PlayerOne(x_position, y_position)
 					self.player_one.add(sprite)
 				if tile_value == '1':
 						print('door goes here')	
+
+	def player_two_setup(self, layout):
+		for row_index, row in enumerate(layout):
+			for column_index, tile_value in enumerate(row):
+				x_position = column_index * tile_size
+				y_position = row_index * tile_size
+
+				if tile_value == '0':
+					sprite = PlayerTwo(x_position, y_position)
+					self.player_two.add(sprite)
+				if tile_value == '1':
+						print('door goes here')						
 
 
 
@@ -121,5 +185,15 @@ class Level: # main class
 
 		#Player One 
 
+		self.horizontal_collision()
+
 		self.player_one.draw(self.display_surface)
 		self.player_one.update()
+		
+
+		#Player Two
+
+		self.player_two.draw(self.display_surface)
+		self.player_two.update()
+		self.window_scroll()
+
