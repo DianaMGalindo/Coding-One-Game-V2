@@ -1,6 +1,7 @@
 import pygame
 from csv import reader #allow the reading of csv files
 from settings import tile_size
+from os import walk #go through file system. It will return directory path, directory names (folders within the folder), filenames
 
 
 def import_csv_layout(path): #path will pass the csv file
@@ -28,7 +29,18 @@ def import_sliced_img(path): #path will load the img file
 
 			sliced_tiles.append(new_surface)	
 
-	return sliced_tiles		
+	return sliced_tiles	
 
+def import_character_folder(path): 
+	surface_list = []
+
+	for _, __, images in walk(path):
+		for image in images:
+			full_path = path + '/' + image
+			character_surface = pygame.image.load(full_path).convert_alpha()
+			surface_list.append(character_surface)
+			
+	return surface_list
+		
 
 

@@ -2,7 +2,7 @@ import pygame
 from support import import_csv_layout, import_sliced_img
 from settings import tile_size, screen_range_upper, screen_range_lower
 from tile_specs import TileSpecs, StaticTile, Trees, House, Door
-from player import PlayerOne, PlayerTwo
+from player import Players, PlayerOne, PlayerTwo
 
 
 
@@ -124,15 +124,78 @@ class Level: # main class
 
 
 	def horizontal_collision(self):
-		players = self.player_one.sprite and self.player_two.sprite
-		players.rect.x += players.direction.x * players.speed
+		player_1 = self.player_one.sprite 
+		player_2 = self.player_two.sprite 
+		player_1.rect.x += player_1.direction.x * player_1.speed
+		player_2.rect.x += player_2.direction.x * player_2.speed
 
 		for sprite in self.terrain_sprites.sprites():
-			if sprite.rect.colliderect(players.rect):
-				if players.direction.x <0:
-					players.rect.left = sprite.rect.right
-				elif players.direction.x > 0:
-					players.rect.right = sprite.rect.left			
+
+			if sprite.rect.colliderect(player_1.rect):
+				if player_1.direction.x < 0: #checking if the player is moving to the left
+					player_1.rect.left = sprite.rect.right
+				elif player_1.direction.x >0:
+					player_1.rect.right = sprite.rect.left
+
+			if sprite.rect.colliderect(player_2.rect):
+				if player_2.direction.x <0:
+					player_2.rect.left = sprite.rect.right
+				elif player_2.direction.x > 0: # player moving to the right
+					player_2.rect.right = sprite.rect.left			
+
+
+	def vertical_collision(self):
+		player_1 = self.player_one.sprite 
+		player_2 = self.player_two.sprite
+		#and self.player_two.sprite	
+		player_1.gravity_applied()
+		player_2.gravity_applied()
+
+		for sprite in self.terrain_sprites.sprites():
+
+		#PLAYER ONE
+			if sprite.rect.colliderect(player_1.rect):
+				if player_1.direction.y < 0: #player moving up
+					player_1.rect.top = sprite.rect.bottom
+					player_1.direction.y = 0
+					player_1.player_on_roof = True # player collides with the roof
+
+				elif player_1.direction.y > 0:	#player moving down
+					player_1.rect.bottom = sprite.rect.top
+					player_1.direction.y = 0
+					player_1.player_on_ground = True # player collides with the ground
+
+
+		#PLAYER TWO		 			
+			if sprite.rect.colliderect(player_2.rect):
+				if player_2.direction.y < 0: #player moving up
+					player_2.rect.top = sprite.rect.bottom
+					player_2.direction.y = 0
+					player_2.player_on_roof = True # player collides with the roof
+
+				elif player_2.direction.y > 0:	#player moving down
+					player_2.rect.bottom = sprite.rect.top
+					player_2.direction.y = 0
+					player_2.player_on_ground = True # player collides with the ground	
+
+
+		#checking if the player is on the ceiling	
+		if player_1.player_on_roof and player_1.direction.y > 0: #player is falling 
+			player_1.player_on_roof = False	 
+
+		#checking if the player is on the ground 		
+		if player_1.player_on_ground and player_1.direction.y < 0 or player_1.direction.y >1:
+			player_1.player_on_ground = False # the player is jumping or falling
+
+		 #checking if the player is on the ceiling	
+		if player_2.player_on_roof and player_2.direction.y > 0: #player is falling 
+			player_2.player_on_roof = False	 
+
+		#checking if the player is on the ground 		
+		if player_2.player_on_ground and player_2.direction.y < 0 or player_2.direction.y >1:
+			player_2.player_on_ground = False # the player is jumping or falling
+
+														
 
 	def player_one_setup(self, layout):
 		for row_index, row in enumerate(layout):
@@ -183,17 +246,21 @@ class Level: # main class
 		self.door_sprites.draw(self.display_surface)
 		self.door_sprites.update(self.level_shift)
 
-		#Player One 
-
-		self.horizontal_collision()
-
-		self.player_one.draw(self.display_surface)
-		self.player_one.update()
-		
-
-		#Player Two
-
-		self.player_two.draw(self.display_surface)
-		self.player_two.update()
 		self.window_scroll()
 
+		#Players
+
+		self.player_one.draw(self.display_surface)
+		self.player_two.draw(self.display_surface)
+		self.player_one.update()
+		self.player_two.update()
+		self.horizontal_collision()
+		self.vertical_collision()
+		
+		
+
+	
+		
+
+
+        
