@@ -1,5 +1,5 @@
 import pygame
-from support import import_character_folder
+from support import import_sprites_folder
 
 
 class Players(pygame.sprite.Sprite):
@@ -58,15 +58,27 @@ class Players(pygame.sprite.Sprite):
 			self.image = flip
 
 
-		#checking the animation status of the character
+		#checking the animation collision status of the character and re-set origin point of rect
 		if self.player_on_ground: 
 			self.rect = self.image.get_rect(midbottom = self.rect.midbottom)
 
+		elif self.player_on_ground and self.player_on_left:
+			self.rect = self.image.get_rect(bottomleft = self.rect.bottomleft)
+
+		elif self.player_on_ground and self.player_on_right:
+			self.rect = self.image.get_rect(bottomright = self.rect.bottomright)	
+
+	
+		#checking the animation collision status of the character and re-set origin point of rect
 		elif self.player_on_roof:
 			self.rect = self.image.get_rect(midtop = self.rect.midtop)
 
-		else: 
-			self.rect = self.image.get_rect(center = self.rect.center)		
+		elif self.player_on_roof and self.player_on_left:
+			self.rect = self.image.get_rect(topleft = self.rect.topleft)
+
+		elif self.player_on_roof and self.player_on_right:
+			self.rect = self.image.get_rect(topright = self.rect.topright)
+
 
 
 	def character_status(self):
@@ -110,7 +122,7 @@ class PlayerOne(Players):
 
 		for animation in self.animations.keys():
 			full_path_one = character_one_path + animation
-			self.animations[animation] = import_character_folder(full_path_one)			
+			self.animations[animation] = import_sprites_folder(full_path_one)			
 
 	def update(self):
 		self.keys_setup_one()
@@ -146,7 +158,7 @@ class PlayerTwo(Players):
 
 		for animation in self.animations.keys():
 			full_path_two = character_two_path + animation
-			self.animations[animation] = import_character_folder(full_path_two)						
+			self.animations[animation] = import_sprites_folder(full_path_two)						
 
 	def update(self):
 	 	self.keys_setup_two()

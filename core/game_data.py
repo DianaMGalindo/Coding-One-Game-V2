@@ -6,5 +6,7 @@ level_0 = {
 	'house': '../levels/0/level_0__House.csv',
 	'door': '../levels/0/level_0__Door.csv',
 	'player-one': '../levels/0/level_0__Player One.csv',
-	'player-two': '../levels/0/level_0__Player Two.csv'
+	'player-two': '../levels/0/level_0__Player Two.csv',
+	'ethereum-banana': '../levels/0/level_0__Ethereum-Banana.csv',
+	'background': '../levels/0/level_0__Background.csv'
 }

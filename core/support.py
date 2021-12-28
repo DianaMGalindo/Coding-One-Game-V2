@@ -31,15 +31,15 @@ def import_sliced_img(path): #path will load the img file
 
 	return sliced_tiles	
 
-def import_character_folder(path): 
+def import_sprites_folder(path): 
 	surface_list = []
 
 	for _, __, images in walk(path):
 		for image in images:
 			full_path = path + '/' + image
-			character_surface = pygame.image.load(full_path).convert_alpha()
-			surface_list.append(character_surface)
-			
+			sprites_surface = pygame.image.load(full_path).convert_alpha()
+			surface_list.append(sprites_surface)
+
 	return surface_list
 		
 

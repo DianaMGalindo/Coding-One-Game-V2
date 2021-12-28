@@ -1,7 +1,7 @@
 import pygame 
 from support import import_csv_layout, import_sliced_img
 from settings import tile_size, screen_range_upper, screen_range_lower
-from tile_specs import TileSpecs, StaticTile, Trees, House, Door
+from tile_specs import TileSpecs, StaticTile, Trees, House, Door, AnimatedTiles, Background
 from player import Players, PlayerOne, PlayerTwo
 
 
@@ -10,6 +10,8 @@ class Level: # main class
 	def __init__(self, level_data, surface): #level_data will be a dictionary with all csv files from Tileset
 		self.display_surface = surface 
 		self.level_shift = 0
+		self.character_current_x_one = 0
+		self.character_current_x_two = 0
 
 		#PLayer One
 
@@ -31,6 +33,11 @@ class Level: # main class
 		terrain_layout = import_csv_layout(level_data['terrain'])
 		self.terrain_sprites = self.create_tile_group(terrain_layout, 'terrain') # especify the type of tile group being created
 
+		#ethereum banana
+
+		ether_banana_layout = import_csv_layout(level_data['ethereum-banana'])
+		self.ether_banana_sprites = self.create_tile_group(ether_banana_layout, 'ether-banana')
+
 		#Props setup
 		props_layout = import_csv_layout(level_data['props'])
 		self.props_sprites = self.create_tile_group(props_layout, 'props')
@@ -45,9 +52,12 @@ class Level: # main class
 		self.house_sprites = self.create_tile_group(house_layout, 'house')
 
 		#Door setup
-
 		door_layout = import_csv_layout(level_data['door'])
 		self.door_sprites = self.create_tile_group(door_layout, 'door')
+
+		#Background
+		background_layout = import_csv_layout(level_data['background'])
+		self.background_sprites = self.create_tile_group(background_layout, 'background')
 
 	
 	#creating the 'camera' effect to be able to navigate the level
@@ -101,6 +111,13 @@ class Level: # main class
 						sprite = StaticTile(tile_size, x_position, y_position, tile_surface)
 						#sprite_group.add(sprite) # Adding individual sprites to group of sprites
 
+					if layout_type == 'ether-banana': 
+						if tile_value == '0':
+							sprite = AnimatedTiles(tile_size, x_position, y_position, '../graphics/ether-banana/banana')
+						if tile_value == '1':
+							sprite = AnimatedTiles(tile_size, x_position, y_position, '../graphics/ether-banana/ethereum')	
+
+
 					if layout_type == 'props':
 						props_tile_list = import_sliced_img('../graphics/props/props.png')	
 						tile_surface = props_tile_list[int(tile_value)]
@@ -116,7 +133,10 @@ class Level: # main class
 						sprite = House(tile_size, x_position, y_position,'../graphics/house/house.png', offset_y = True)
 
 					if layout_type == 'door':
-						sprite = Door(tile_size, x_position, y_position,'../graphics/door/door.png', offset_y = True )		
+						sprite = Door(tile_size, x_position, y_position,'../graphics/door/door.png', offset_y = True )	
+
+					if layout_type == 'background':
+						sprite = Background(tile_size, x_position, y_position,'../graphics/background/background.png',  offset_y = True)		
 
 					sprite_group.add(sprite) 
 
@@ -131,17 +151,42 @@ class Level: # main class
 
 		for sprite in self.terrain_sprites.sprites():
 
+			#PLAYER ONE
 			if sprite.rect.colliderect(player_1.rect):
 				if player_1.direction.x < 0: #checking if the player is moving to the left
 					player_1.rect.left = sprite.rect.right
+					player_1.player_on_left = True
+					self.character_current_x_one = player_1.rect.left
+
 				elif player_1.direction.x >0:
 					player_1.rect.right = sprite.rect.left
+					player_1.player_on_right = True
+					self.character_current_x_one = player_1.rect.right
 
+
+			#PLAYER TWO		
 			if sprite.rect.colliderect(player_2.rect):
 				if player_2.direction.x <0:
 					player_2.rect.left = sprite.rect.right
+					player_2.player_on_left = True
+					self.character_current_x_two = player_2.rect.left
+
 				elif player_2.direction.x > 0: # player moving to the right
-					player_2.rect.right = sprite.rect.left			
+					player_2.rect.right = sprite.rect.left	
+					player_2.player_on_right = True	
+					self.character_current_x_two = player_2.rect.right	
+
+		if player_1.player_on_left and ( player_1.rect.left < self.character_current_x_one or player_1.direction.x >= 0):
+			player_1.player_on_left = False
+
+		if player_1.player_on_right and (player_1.rect.right > self.character_current_x_one or player_1.direction.x <=0):
+			player_1.player_on_right = False	
+
+		if player_2.player_on_left and (player_2.rect.left < self.character_current_x_two or player_2.direction.x >=0):
+			player_2.player_on_left = False	
+
+		if player_2.player_on_right and (player_2.rect.right > self.character_current_x_two or player_2.direction.x <=0):
+			player_2.player_on_right = False	
 
 
 	def vertical_collision(self):
@@ -226,9 +271,20 @@ class Level: # main class
 	def run(self): #method to run the level
 
 
+		#background
+
+		self.background_sprites.draw(self.display_surface)
+		self.background_sprites.update(self.level_shift)
+
 		#terrain
 		self.terrain_sprites.draw(self.display_surface) #drawing the terrain. draw(surface to draw)
 		self.terrain_sprites.update(self.level_shift)# moving the screen to see all level	
+
+
+		#Ethereum banana
+		self.ether_banana_sprites.draw(self.display_surface)
+		self.ether_banana_sprites.update(self.level_shift)
+
 
 		#props
 		self.props_sprites.draw(self.display_surface)

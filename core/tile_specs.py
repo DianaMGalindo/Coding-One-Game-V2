@@ -1,4 +1,6 @@
 import pygame
+from os import walk
+from support import import_sprites_folder
 
 class TileSpecs(pygame.sprite.Sprite): # sub class of Sprite pygame, so that they can be added to a sprite group.
 	def __init__(self, size, x ,y):
@@ -22,6 +24,37 @@ class StaticTile(TileSpecs):
 			offset_y = size + y 
 			self.rect = self.image.get_rect(bottomleft=(x, offset_y))
 
+class AnimatedTiles(TileSpecs):
+	def __init__(self, size, x, y, path):
+		super().__init__(size,x,y)
+
+		self.frames = import_sprites_folder(path)
+		self.frame_index = 0
+		self.animation_speed = 0.13	
+		self.image = self.frames[self.frame_index]
+
+		#overwriting the position of the tile
+		offset_y = size + y 
+		self.rect = self.image.get_rect(bottomleft= (x, offset_y))
+
+
+	def animate(self):	
+
+		#creating a loop over frame index (every image within the folder)
+		self.frame_index += self.animation_speed
+
+		if self.frame_index >= len(self.frames):
+			self.frame_index = 0
+
+		self.image = self.frames[int(self.frame_index)]
+
+
+	def update(self, screen_shift):
+		self.animate()
+		self.rect.x += screen_shift
+
+
+
 class Trees(StaticTile):
 
 	def __init__(self, size, x, y, path, offset_y):
@@ -35,4 +68,7 @@ class House(StaticTile):
 class Door(StaticTile):
 	def __init__(self, size, x, y, path, offset_y):	
 		super().__init__(size, x, y, pygame.image.load(path).convert_alpha(), offset_y)
-		
+
+class Background(StaticTile):
+	def __init__(self, size, x, y, path, offset_y):
+		super().__init__(size, x, y, pygame.image.load(path).convert_alpha(), offset_y)		
