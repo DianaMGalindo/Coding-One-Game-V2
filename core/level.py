@@ -1,31 +1,32 @@
 import pygame 
 from support import import_csv_layout, import_sliced_img
-from settings import tile_size, screen_range_upper, screen_range_lower
+from settings import tile_size, screen_range_upper, screen_range_lower, screen_height
 from tile_specs import TileSpecs, StaticTile, Trees, House, Door, AnimatedTiles, Background
 from player import Players, PlayerOne, PlayerTwo
 
 
 
 class Level: # main class
-	def __init__(self, level_data, surface): #level_data will be a dictionary with all csv files from Tileset
+	def __init__(self, level_data, surface, load_finish): #level_data will be a dictionary with all csv files from Tileset
 		self.display_surface = surface 
 		self.level_shift = 0
 		self.character_current_x_one = 0
 		self.character_current_x_two = 0
+		self.load_finish = load_finish
+		self.goal = pygame.sprite.GroupSingle() #Goal for both players
+
 
 		#PLayer One
 
 		player_one_layout = import_csv_layout(level_data['player-one'])
 		self.player_one = pygame.sprite.GroupSingle()
-		#self.goal  = pygame.sprite.GroupSingle() #should be door
 		self.player_one_setup(player_one_layout	)
 
 		#PLayer Two
 
 		player_two_layout = import_csv_layout(level_data['player-two'])
 		self.player_two = pygame.sprite.GroupSingle()
-		#self.goal  = pygame.sprite.GroupSingle() #should be door
-		self.player_two_setup(player_two_layout	)
+		self.player_two_setup(player_two_layout)
 
 
 		#Terrain setup
@@ -52,8 +53,8 @@ class Level: # main class
 		self.house_sprites = self.create_tile_group(house_layout, 'house')
 
 		#Door setup
-		door_layout = import_csv_layout(level_data['door'])
-		self.door_sprites = self.create_tile_group(door_layout, 'door')
+		# door_layout = import_csv_layout(level_data['door'])
+		# self.door_sprites = self.create_tile_group(door_layout, 'door')
 
 		#Background
 		background_layout = import_csv_layout(level_data['background'])
@@ -132,8 +133,8 @@ class Level: # main class
 					if layout_type == 'house':
 						sprite = House(tile_size, x_position, y_position,'../graphics/house/house.png', offset_y = True)
 
-					if layout_type == 'door':
-						sprite = Door(tile_size, x_position, y_position,'../graphics/door/door.png', offset_y = True )	
+					# if layout_type == 'door':
+					# 	sprite = Door(tile_size, x_position, y_position,'../graphics/door/door.png', offset_y = True )	
 
 					if layout_type == 'background':
 						sprite = Background(tile_size, x_position, y_position,'../graphics/background/background.png',  offset_y = True)		
@@ -252,7 +253,10 @@ class Level: # main class
 					sprite = PlayerOne(x_position, y_position)
 					self.player_one.add(sprite)
 				if tile_value == '1':
-						print('door goes here')	
+					end_door = pygame.image.load('../graphics/door/door.png').convert_alpha()
+					sprite = StaticTile(tile_size, x_position, y_position, end_door, offset_y = True)
+					self.goal.add(sprite)
+
 
 	def player_two_setup(self, layout):
 		for row_index, row in enumerate(layout):
@@ -264,11 +268,32 @@ class Level: # main class
 					sprite = PlayerTwo(x_position, y_position)
 					self.player_two.add(sprite)
 				if tile_value == '1':
-						print('door goes here')						
+					end_door = pygame.image.load('../graphics/door/door.png').convert_alpha()
+					sprite = StaticTile(tile_size, x_position, y_position, end_door, offset_y = True)
+					self.goal.add(sprite)
+
+
+	def check_death(self):
+		player_1 = self.player_one.sprite 
+		player_2 = self.player_two.sprite 
+
+		if player_1.rect.top > screen_height and player_2.rect.top > screen_height:
+			self.load_finish()	
+
+
+	def check_win(self):
+		if pygame.sprite.spritecollide(self.player_two.sprite, self.goal, False): # checking if my player sprite is colliding with door
+			pygame.time.delay(2000) #generating delay 
+			self.load_finish()
+
+		if pygame.sprite.spritecollide(self.player_one.sprite, self.goal, False): # checking if my player sprite is colliding with door
+			pygame.time.delay(2000) #generating delay 
+			self.load_finish()	
 
 
 
 	def run(self): #method to run the level
+
 
 
 		#background
@@ -298,9 +323,12 @@ class Level: # main class
 		self.house_sprites.draw(self.display_surface)
 		self.house_sprites.update(self.level_shift)
 
-		#door
-		self.door_sprites.draw(self.display_surface)
-		self.door_sprites.update(self.level_shift)
+		# door
+		# self.door_sprites.draw(self.display_surface)
+		# self.door_sprites.update(self.level_shift)
+
+		self.goal.draw(self.display_surface)
+		self.goal.update(self.level_shift)
 
 		self.window_scroll()
 
@@ -313,6 +341,10 @@ class Level: # main class
 		self.horizontal_collision()
 		self.vertical_collision()
 		
+
+		self.check_death()
+			
+		self.check_win()
 		
 
 	
