@@ -1,13 +1,13 @@
 import pygame 
 from support import import_csv_layout, import_sliced_img
 from settings import tile_size, screen_range_upper, screen_range_lower, screen_height
-from tile_specs import TileSpecs, StaticTile, Trees, House, Door, AnimatedTiles, Background
+from tile_specs import TileSpecs, StaticTile, Trees, House, Door, AnimatedTiles, Background, Edibles
 from player import Players, PlayerOne, PlayerTwo
 
 
 
 class Level: # main class
-	def __init__(self, level_data, surface, load_finish): #level_data will be a dictionary with all csv files from Tileset
+	def __init__(self, level_data, surface, load_finish, points_count_one, points_count_two): #level_data will be a dictionary with all csv files from Tileset
 		self.display_surface = surface 
 		self.level_shift = 0
 		self.character_current_x_one = 0
@@ -27,6 +27,11 @@ class Level: # main class
 		player_two_layout = import_csv_layout(level_data['player-two'])
 		self.player_two = pygame.sprite.GroupSingle()
 		self.player_two_setup(player_two_layout)
+
+
+		#Players points bar and count
+		self.points_count_one = points_count_one
+		self.points_count_two = points_count_two
 
 
 		#Terrain setup
@@ -114,9 +119,9 @@ class Level: # main class
 
 					if layout_type == 'ether-banana': 
 						if tile_value == '0':
-							sprite = AnimatedTiles(tile_size, x_position, y_position, '../graphics/ether-banana/banana')
+							sprite = Edibles(tile_size, x_position, y_position, '../graphics/ether-banana/banana', 1, -1)
 						if tile_value == '1':
-							sprite = AnimatedTiles(tile_size, x_position, y_position, '../graphics/ether-banana/ethereum')	
+							sprite = Edibles(tile_size, x_position, y_position, '../graphics/ether-banana/ethereum', -1, 1)	
 
 
 					if layout_type == 'props':
@@ -273,6 +278,20 @@ class Level: # main class
 					self.goal.add(sprite)
 
 
+	def player_one_point_count(self):
+		collided_points = pygame.sprite.spritecollide(self.player_one.sprite, self.ether_banana_sprites, True)
+
+		if collided_points:
+			for point in collided_points:
+					self.points_count_one(point.value_one)	
+
+	def player_two_point_count(self):
+		collided_points = pygame.sprite.spritecollide(self.player_two.sprite, self.ether_banana_sprites, True)
+
+		if collided_points:
+			for point in collided_points:
+					self.points_count_two(point.value_two)					
+
 	def check_death(self):
 		player_1 = self.player_one.sprite 
 		player_2 = self.player_two.sprite 
@@ -340,11 +359,17 @@ class Level: # main class
 		self.player_two.update()
 		self.horizontal_collision()
 		self.vertical_collision()
+
+		#Points Count
+		self.player_one_point_count()
+		self.player_two_point_count()
 		
 
 		self.check_death()
 			
 		self.check_win()
+
+
 		
 
 	

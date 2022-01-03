@@ -54,6 +54,20 @@ class AnimatedTiles(TileSpecs):
 		self.rect.x += screen_shift
 
 
+class Edibles(AnimatedTiles):
+	def __init__ (self, size, x, y, path, value_one, value_two):
+		super().__init__(size,x,y,path)	
+
+		self.value_one = value_one
+		self.value_two = value_two
+
+	def player_one_value(self):
+		 
+		self.value_one = value_one
+
+	def player_two_value(self):
+		self.value_two = value_two
+			
 
 class Trees(StaticTile):
 
