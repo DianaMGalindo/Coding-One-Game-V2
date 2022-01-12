@@ -320,23 +320,26 @@ class Level: # main class
 		self.background_sprites.draw(self.display_surface)
 		self.background_sprites.update(self.level_shift)
 
+		#trees
+		self.trees_sprites.draw(self.display_surface)
+		self.trees_sprites.update(self.level_shift)
+
 		#terrain
 		self.terrain_sprites.draw(self.display_surface) #drawing the terrain. draw(surface to draw)
 		self.terrain_sprites.update(self.level_shift)# moving the screen to see all level	
-
-
-		#Ethereum banana
-		self.ether_banana_sprites.draw(self.display_surface)
-		self.ether_banana_sprites.update(self.level_shift)
 
 
 		#props
 		self.props_sprites.draw(self.display_surface)
 		self.props_sprites.update(self.level_shift)
 
-		#trees
-		self.trees_sprites.draw(self.display_surface)
-		self.trees_sprites.update(self.level_shift)
+		# #trees
+		# self.trees_sprites.draw(self.display_surface)
+		# self.trees_sprites.update(self.level_shift)
+
+		#Ethereum banana
+		self.ether_banana_sprites.draw(self.display_surface)
+		self.ether_banana_sprites.update(self.level_shift)
 
 		#house 
 		self.house_sprites.draw(self.display_surface)

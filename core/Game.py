@@ -16,16 +16,16 @@ class Game:
  		self.welcome = Welcome(0, self.max_level, screen, self.load_level)
  		self.game_status = 'welcome'
 
- 		#points bar
- 		self.bar_current_points_one = 10
- 		self.bar_total_points_one = 100
+ 		#points bars
+ 		self.bar_current_points_one = 0
+ 		self.bar_total_points_one = 8
 
- 		self.bar_current_points_two = 20
- 		self.bar_total_points_two = 100
+ 		self.bar_current_points_two = 0
+ 		self.bar_total_points_two = 8
         
         #points counter
  		self.count_points_player_one = 0
- 		self.count_points_player_two = 1
+ 		self.count_points_player_two = 0
 
  	#points interface 
 
@@ -36,14 +36,15 @@ class Game:
  		self.level = Level(level_0, screen, self.load_finish, self.points_count_one, self.points_count_two)
  		self.game_status = 'level'
 
- 	#updating players points
+ 	#updating players points and bars
  	
  	def points_count_one(self, amount):
  		self.count_points_player_one += amount
+ 		self.bar_current_points_one += amount
 
  	def points_count_two(self, amount):
- 		self.count_points_player_two += amount	
-
+ 		self.count_points_player_two += amount
+ 		self.bar_current_points_two += amount	
 
 
  	#loading welcome screen 	
@@ -64,8 +65,8 @@ class Game:
  			self.finish.run()		
  		else:
  			self.level.run()
- 			self.points.show_bar_one( self.bar_current_points_one, self.bar_total_points_one )
- 			self.points.show_bar_two( self.bar_current_points_two, self.bar_total_points_two )
+ 			self.points.show_bar_one(self.bar_current_points_one, self.bar_total_points_one )
+ 			self.points.show_bar_two(self.bar_current_points_two, self.bar_total_points_two )
  			self.points.show_points(self.count_points_player_one, self.count_points_player_two)
 
  			
