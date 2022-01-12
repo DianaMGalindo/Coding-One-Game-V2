@@ -1,2 +1,7 @@
 __pychache__
 *.csv
+*.psd
+*.tsx
+*.tmx
+*.png
+/graphics
