@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from pygame import mixer
 from settings import *
 from level import Level
 from game_data import level_0
@@ -73,11 +74,16 @@ class Game:
 
 
 pygame.init()
+pygame.mixer.init()
 
 #PYGAME WINDOW SETUP
 screen = pygame.display.set_mode((screen_width, screen_height))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Metaverse')
+
+mixer.music.load('../sounds/call-to-adventure-by-kevin-macleod-from-filmmusic-io.wav')
+mixer.music.set_volume(0.12)
+mixer.music.play(-1)# adding -1 to play sound in loop 
 
  #connecting with my main class Level
 

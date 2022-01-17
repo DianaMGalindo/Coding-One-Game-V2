@@ -1,4 +1,5 @@
 import pygame 
+from pygame import mixer
 from support import import_csv_layout, import_sliced_img
 from settings import tile_size, screen_range_upper, screen_range_lower, screen_height
 from tile_specs import TileSpecs, StaticTile, Trees, House, Door, AnimatedTiles, Background, Edibles
@@ -283,7 +284,12 @@ class Level: # main class
 
 		if collided_points:
 			for point in collided_points:
-					self.points_count_one(point.value_one)	
+					self.points_count_one(point.value_one)
+
+					if point.value_one == 1: 
+						yummy_sound = mixer.Sound('../sounds/yummy.wav')
+						yummy_sound.set_volume(0.3)
+						yummy_sound.play()	
 
 	def player_two_point_count(self):
 		collided_points = pygame.sprite.spritecollide(self.player_two.sprite, self.ether_banana_sprites, True)
