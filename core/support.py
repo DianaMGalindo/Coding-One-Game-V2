@@ -2,6 +2,7 @@ import pygame
 from csv import reader #allow the reading of csv files
 from settings import tile_size
 from os import walk #go through file system. It will return directory path, directory names (folders within the folder), filenames
+from pathlib import Path 
 
 
 def import_csv_layout(path): #path will pass the csv file
@@ -42,5 +43,11 @@ def import_sprites_folder(path):
 
 	return surface_list
 		
+
+#Normalizing paths
+
+def get_project_root() -> Path:
+	return Path(__file__).parent.parent
+
 
 

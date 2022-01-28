@@ -1,18 +1,22 @@
 import pygame 
+import os
+from pygame import mixer
 from support import import_csv_layout, import_sliced_img
 from settings import tile_size, screen_range_upper, screen_range_lower, screen_height
 from tile_specs import TileSpecs, StaticTile, Trees, House, Door, AnimatedTiles, Background, Edibles
 from player import Players, PlayerOne, PlayerTwo
-
+from support import get_project_root
 
 
 class Level: # main class
-	def __init__(self, level_data, surface, load_finish, points_count_one, points_count_two): #level_data will be a dictionary with all csv files from Tileset
+	def __init__(self, level_data, surface, load_finish, load_finish_two, points_count_one, points_count_two, load_game_over): #level_data will be a dictionary with all csv files from Tileset
 		self.display_surface = surface 
 		self.level_shift = 0
 		self.character_current_x_one = 0
 		self.character_current_x_two = 0
 		self.load_finish = load_finish
+		self.load_finish_two = load_finish_two
+		self.load_game_over = load_game_over
 		self.goal = pygame.sprite.GroupSingle() #Goal for both players
 
 
@@ -110,7 +114,7 @@ class Level: # main class
 
 					#importing the sliced tile set that will populate the layout
 					if layout_type == "terrain":
-						terrain_tile_list = import_sliced_img('../graphics/terrain/Terrain_V2.png') #sliced images
+						terrain_tile_list = import_sliced_img(os.path.join(get_project_root(), 'graphics/terrain/Terrain_V2.png')) #sliced images
 						
 						#getting the value of every tile imported in terrain_tile_list
 						tile_surface = terrain_tile_list[int(tile_value)]
@@ -119,30 +123,30 @@ class Level: # main class
 
 					if layout_type == 'ether-banana': 
 						if tile_value == '0':
-							sprite = Edibles(tile_size, x_position, y_position, '../graphics/ether-banana/banana', 1, -1)
+							sprite = Edibles(tile_size, x_position, y_position, os.path.join(get_project_root(), 'graphics/ether-banana/banana'), 1, -1)
 						if tile_value == '1':
-							sprite = Edibles(tile_size, x_position, y_position, '../graphics/ether-banana/ethereum', -1, 1)	
+							sprite = Edibles(tile_size, x_position, y_position, os.path.join(get_project_root(), 'graphics/ether-banana/ethereum'), -1, 1)	
 
 
 					if layout_type == 'props':
-						props_tile_list = import_sliced_img('../graphics/props/props.png')	
+						props_tile_list = import_sliced_img(os.path.join(get_project_root(), 'graphics/props/props.png'))	
 						tile_surface = props_tile_list[int(tile_value)]
 						sprite = StaticTile(tile_size, x_position, y_position, tile_surface)
 
 					if layout_type == 'trees':
 						if tile_value == '0' :
-								sprite = Trees(tile_size, x_position, y_position,'../graphics/trees/Tree_left.png', offset_y = True)
+								sprite = Trees(tile_size, x_position, y_position,os.path.join(get_project_root(), 'graphics/trees/Tree_left.png'), offset_y = True)
 						if tile_value == '1':
-								sprite = Trees(tile_size, x_position, y_position,'../graphics/trees/Tree_right.png', offset_y = True)
+								sprite = Trees(tile_size, x_position, y_position,os.path.join(get_project_root(), 'graphics/trees/Tree_right.png'), offset_y = True)
 
 					if layout_type == 'house':
-						sprite = House(tile_size, x_position, y_position,'../graphics/house/house.png', offset_y = True)
+						sprite = House(tile_size, x_position, y_position,os.path.join(get_project_root(), 'graphics/house/house.png'), offset_y = True)
 
 					# if layout_type == 'door':
-					# 	sprite = Door(tile_size, x_position, y_position,'../graphics/door/door.png', offset_y = True )	
+					# 	sprite = Door(tile_size, x_position, y_position,os.path.join(get_project_root(), 'graphics/door/door.png'), offset_y = True )	
 
 					if layout_type == 'background':
-						sprite = Background(tile_size, x_position, y_position,'../graphics/background/background.png',  offset_y = True)		
+						sprite = Background(tile_size, x_position, y_position,os.path.join(get_project_root(), 'graphics/background/general_background_v3.jpg'),  offset_y = True)		
 
 					sprite_group.add(sprite) 
 
@@ -258,7 +262,7 @@ class Level: # main class
 					sprite = PlayerOne(x_position, y_position)
 					self.player_one.add(sprite)
 				if tile_value == '1':
-					end_door = pygame.image.load('../graphics/door/door.png').convert_alpha()
+					end_door = pygame.image.load(os.path.join(get_project_root(), 'graphics/door/door.png')).convert_alpha()
 					sprite = StaticTile(tile_size, x_position, y_position, end_door, offset_y = True)
 					self.goal.add(sprite)
 
@@ -273,7 +277,7 @@ class Level: # main class
 					sprite = PlayerTwo(x_position, y_position)
 					self.player_two.add(sprite)
 				if tile_value == '1':
-					end_door = pygame.image.load('../graphics/door/door.png').convert_alpha()
+					end_door = pygame.image.load(os.path.join(get_project_root(), 'graphics/door/door.png')).convert_alpha()
 					sprite = StaticTile(tile_size, x_position, y_position, end_door, offset_y = True)
 					self.goal.add(sprite)
 
@@ -283,33 +287,44 @@ class Level: # main class
 
 		if collided_points:
 			for point in collided_points:
-					self.points_count_one(point.value_one)	
+					self.points_count_one(point.value_one)
+
+					if point.value_one == 1: 
+						yummy_sound = mixer.Sound(os.path.join(get_project_root(), 'sounds/yummy.wav'))
+						yummy_sound.set_volume(0.3)
+						yummy_sound.play()	
 
 	def player_two_point_count(self):
 		collided_points = pygame.sprite.spritecollide(self.player_two.sprite, self.ether_banana_sprites, True)
 
 		if collided_points:
 			for point in collided_points:
-					self.points_count_two(point.value_two)					
+					self.points_count_two(point.value_two)	
+
+					if point.value_two == 1: 
+						yummy_sound = mixer.Sound(os.path.join(get_project_root(), 'sounds/Picked-Coin-Echo.wav'))
+						yummy_sound.set_volume(0.3)
+						yummy_sound.play()				
 
 	def check_death(self):
 		player_1 = self.player_one.sprite 
 		player_2 = self.player_two.sprite 
 
 		if player_1.rect.top > screen_height and player_2.rect.top > screen_height:
-			self.load_finish()	
+			self.load_game_over()	
 
 
 	def check_win(self):
-		if pygame.sprite.spritecollide(self.player_two.sprite, self.goal, False): # checking if my player sprite is colliding with door
-			pygame.time.delay(2000) #generating delay 
-			self.load_finish()
 
 		if pygame.sprite.spritecollide(self.player_one.sprite, self.goal, False): # checking if my player sprite is colliding with door
-			pygame.time.delay(2000) #generating delay 
-			self.load_finish()	
+			pygame.time.delay(1000) #generating delay 
+			self.load_finish() 
 
+		if pygame.sprite.spritecollide(self.player_two.sprite, self.goal, False): # checking if my player sprite is colliding with door
+			pygame.time.delay(1000) #generating delay 
+			self.load_finish_two()
 
+		
 
 	def run(self): #method to run the level
 

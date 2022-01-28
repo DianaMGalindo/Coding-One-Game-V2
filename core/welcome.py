@@ -1,9 +1,12 @@
-import pygame 
+import pygame
+
+from support import get_project_root
+import os 
 
 class Welcome:
 	def __init__(self, start_level, max_level, surface, load_level):
 
-		self.display_surface = surface.fill('grey')
+		self.display_surface = surface
 		self.max_level = max_level
 		self.start_level = start_level
 		self.load_level = load_level
@@ -15,6 +18,11 @@ class Welcome:
 		if keys[pygame.K_SPACE]:
 			self.load_level()
 
+	def background(self):
+		self.screen_background = pygame.image.load(os.path.join(get_project_root(),'graphics/background/Welcome_Screen.jpg'))
+		self.display_surface.blit(self.screen_background,(0,0))		
+
 
 	def run(self):
-		self.input()	
+		self.input()
+		self.background()	

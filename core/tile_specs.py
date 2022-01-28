@@ -1,4 +1,5 @@
 import pygame
+from pygame import mixer
 from os import walk
 from support import import_sprites_folder
 
@@ -61,9 +62,15 @@ class Edibles(AnimatedTiles):
 		self.value_one = value_one
 		self.value_two = value_two
 
+
 	def player_one_value(self):
 		 
 		self.value_one = value_one
+
+		# if value_one == 1:
+		# 	yummy_sound = mixer.Sound('../sounds/yummy.ogg')
+		# 	yummy_sound.play()
+
 
 	def player_two_value(self):
 		self.value_two = value_two
