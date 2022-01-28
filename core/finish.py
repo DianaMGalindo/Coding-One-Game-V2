@@ -12,7 +12,8 @@ class Finish:
 		keys = pygame.key.get_pressed()	
 
 		if keys[pygame.K_q]:
-			pygame.quit()	
+			pygame.quit()
+			exit()	
 
 	def background(self):
 		self.screen_background = pygame.image.load(os.path.join(get_project_root(),'graphics/background/Win_Screen_PlayerOne_v2.jpg'))
@@ -62,9 +63,10 @@ class GameOver(Finish):
 			self.load_level()
 
 		if keys[pygame.K_q]:
-			pygame.quit()		
+			pygame.quit()
+			exit()			
 
 	def run(self):
-		self.input()
 		self.game_over()	
+		self.input()
 
