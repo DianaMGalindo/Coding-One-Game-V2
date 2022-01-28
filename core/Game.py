@@ -114,7 +114,7 @@ clock = pygame.time.Clock()
 pygame.display.set_caption('Metaverse')
 
 
-mixer.music.load(os.path.join(get_project_root() ,'sounds/call-to-adventure-by-kevin-macleod-from-filmmusic-io.wav'))
+mixer.music.load(os.path.join(get_project_root() ,'sounds/call-to-adventure-by-kevin-macleod-from-filmmusic-io_lower.wav'))
 mixer.music.set_volume(0.12)
 mixer.music.play(-1)# adding -1 to play sound in loop 
 
