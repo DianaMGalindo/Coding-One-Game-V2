@@ -1,4 +1,7 @@
-import pygame 
+import pygame
+
+from support import get_project_root
+import os 
 
 class Welcome:
 	def __init__(self, start_level, max_level, surface, load_level):
@@ -16,7 +19,7 @@ class Welcome:
 			self.load_level()
 
 	def background(self):
-		self.screen_background = pygame.image.load('../graphics/background/Welcome_Screen.jpg')
+		self.screen_background = pygame.image.load(os.path.join(get_project_root(),'graphics/background/Welcome_Screen.jpg'))
 		self.display_surface.blit(self.screen_background,(0,0))		
 
 

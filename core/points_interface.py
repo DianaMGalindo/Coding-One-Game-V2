@@ -1,12 +1,14 @@
 import pygame
+from support import get_project_root
+import os
 
 class Interface: 
 	def __init__(self, surface):
 		self.display_surface = surface
 
 		#points bar 
-		self.points_bar_one = pygame.image.load('../graphics/points_bar/player_one_bar.png').convert_alpha()
-		self.points_bar_two = pygame.image.load('../graphics/points_bar/player_two_bar.png').convert_alpha()
+		self.points_bar_one = pygame.image.load(os.path.join(get_project_root(), 'graphics/points_bar/player_one_bar.png')).convert_alpha()
+		self.points_bar_two = pygame.image.load(os.path.join(get_project_root(), 'graphics/points_bar/player_two_bar.png')).convert_alpha()
 
 		self.bar_one_top_left = (116, 79)
 		self.bar_two_top_left = (306, 79)
@@ -15,7 +17,7 @@ class Interface:
 		self.bar_height = 3
 
 		#live text
-		self.text = pygame.font.Font('../graphics/points_bar/Hexadecimal.otf', 16)
+		self.text = pygame.font.Font(os.path.join(get_project_root(),'graphics/points_bar/GAMEPLAY-1987.ttf'), 10)
 
 	#method to display points bar	
 	def	show_bar_one(self, current, full):
@@ -42,7 +44,7 @@ class Interface:
 
 	def show_points (self, amount_one, amount_two):
 		point_amount_one = self.text.render(str(amount_one), False, '#ebcb85')
-		self.display_surface.blit(point_amount_one,(100, 64))
+		self.display_surface.blit(point_amount_one,(103, 61))
 
 		point_amount_two = self.text.render(str(amount_two), False, '#1d1838')
-		self.display_surface.blit(point_amount_two, (292, 64))
+		self.display_surface.blit(point_amount_two, (293, 61))

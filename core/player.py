@@ -1,5 +1,7 @@
 import pygame
+import os
 from support import import_sprites_folder
+from support import get_project_root
 
 
 class Players(pygame.sprite.Sprite):
@@ -117,7 +119,7 @@ class PlayerOne(Players):
 
 	#Import character one images	
 	def import_player_assets(self):
-		character_one_path = '../graphics/character_one/'
+		character_one_path = os.path.join(get_project_root(),'graphics/character_one/')
 		self.animations = {'idle': [], 'jump': [], 'fall': [], 'run': []}
 
 		for animation in self.animations.keys():
@@ -153,7 +155,7 @@ class PlayerTwo(Players):
 
 	#Import character two images	
 	def import_player_assets(self):
-		character_two_path = '../graphics/character_two/'
+		character_two_path = os.path.join(get_project_root(),'graphics/character_two/')
 		self.animations = {'idle': [], 'jump': [], 'fall': [], 'run': []}
 
 		for animation in self.animations.keys():
