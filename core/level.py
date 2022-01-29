@@ -290,7 +290,7 @@ class Level: # main class
 					self.points_count_one(point.value_one)
 
 					if point.value_one == 1: 
-						yummy_sound = mixer.Sound(os.path.join(get_project_root(), 'sounds/yummy.wav'))
+						yummy_sound = mixer.Sound(os.path.join(get_project_root(), 'sounds/yummy_lower.wav'))
 						yummy_sound.set_volume(0.3)
 						yummy_sound.play()	
 
@@ -302,7 +302,7 @@ class Level: # main class
 					self.points_count_two(point.value_two)	
 
 					if point.value_two == 1: 
-						yummy_sound = mixer.Sound(os.path.join(get_project_root(), 'sounds/Picked-Coin-Echo.wav'))
+						yummy_sound = mixer.Sound(os.path.join(get_project_root(), 'sounds/Picked-Coin-Echo_lower.wav'))
 						yummy_sound.set_volume(0.3)
 						yummy_sound.play()				
 
