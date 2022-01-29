@@ -1,3 +1,9 @@
+# all credits included in the Read Me file
+# code based on tutorials run by Clear Code
+# Tutorials can be found on the following link:
+# https://www.youtube.com/watch?v=wJMDh9QGRgs
+
+
 import pygame
 import os
 from pygame.locals import *
@@ -114,7 +120,7 @@ clock = pygame.time.Clock()
 pygame.display.set_caption('Metaverse')
 
 
-mixer.music.load(os.path.join(get_project_root() ,'sounds/call-to-adventure-by-kevin-macleod-from-filmmusic-io_lower.wav'))
+mixer.music.load(os.path.join(get_project_root() ,'sounds/call-to-adventure-by-kevin-macleod-from-filmmusic-io_lower_v2.wav'))
 mixer.music.set_volume(0.12)
 mixer.music.play(-1)# adding -1 to play sound in loop 
 
